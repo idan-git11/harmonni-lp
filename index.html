@@ -620,6 +620,16 @@ document.querySelectorAll('form.lf').forEach(f=>{
   f.addEventListener('submit',e=>{e.preventDefault();
     if(!f.querySelector('input[type=checkbox]:checked')){f.classList.add('bad');return}
     f.classList.add('done');
+    try{const q=new URLSearchParams(location.search),d=new URLSearchParams();
+      d.append('name',(f.querySelector('input[autocomplete=name]')||{}).value||'');
+      d.append('phone',(f.querySelector('input[type=tel]')||{}).value||'');
+      d.append('email',(f.querySelector('input[type=email]')||{}).value||'');
+      d.append('employees',(f.querySelector('input[type=radio]:checked')||{}).value||'');
+      d.append('departments',[...f.querySelectorAll('input[type=checkbox]:checked')].map(c=>c.value).join(', '));
+      d.append('page',location.href);
+      ['utm_source','utm_campaign','utm_content'].forEach(k=>d.append(k,q.get(k)||''));
+      fetch('https://hooks.zapier.com/hooks/catch/22202410/CGmdroi7PMGWMNDe9/',{method:'POST',mode:'no-cors',body:d,keepalive:true});
+    }catch(err){}
     if(window.fbq)fbq('track','Lead',{content_name:'Harmonni LP'});})});
 </script>
 </body>
